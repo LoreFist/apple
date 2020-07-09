@@ -16,10 +16,18 @@ $db = ArrayHelper::merge(
 
 return [
     'id'                  => 'app-backend',
+    'name'                => 'Apple Backend',
     'basePath'            => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
-    'bootstrap'           => ['log'],
-    'modules'             => [],
+    'bootstrap'           => ['log', 'site', 'apple'],
+    'modules'             => [
+        'site'  => [
+            'class' => 'app\modules\site\Module',
+        ],
+        'apple' => [
+            'class' => 'app\modules\apple\Module',
+        ],
+    ],
     'components'          => [
         'db'           => $db,
         'request'      => [
@@ -29,6 +37,7 @@ return [
             'identityClass'   => 'common\models\User',
             'enableAutoLogin' => true,
             'identityCookie'  => ['name' => '_identity-backend', 'httpOnly' => true],
+            'loginUrl'        => '/login',
         ],
         'session'      => [
             // this is the name of the session cookie used for login on the backend
@@ -44,13 +53,22 @@ return [
             ],
         ],
         'errorHandler' => [
-            'errorAction' => 'site/error',
+            'errorAction' => '/error',
         ],
         'urlManager'   => [
             'enablePrettyUrl' => true,
             'showScriptName'  => false,
             'rules'           => require __DIR__ . DIRECTORY_SEPARATOR . 'rules.php',
         ],
+        'view'         => [
+            'theme' => [
+                'basePath' => '@app/themes/main',
+                'baseUrl'  => '@web/themes/main',
+                'pathMap'  => [
+                    '@app/views' => '@app/themes/main/views',
+                ],
+            ]
+        ]
     ],
     'params'              => $params,
 ];

@@ -11,17 +11,17 @@ use yii\web\IdentityInterface;
 /**
  * User model
  *
- * @property integer $id
- * @property string  $username
- * @property string  $password_hash
- * @property string  $password_reset_token
- * @property string  $verification_token
- * @property string  $email
- * @property string  $auth_key
- * @property integer $status
- * @property integer $created_at
- * @property integer $updated_at
- * @property string  $password write-only password
+ * @property integer     $id
+ * @property string      $username
+ * @property string      $password_hash
+ * @property string      $password_reset_token
+ * @property string      $verification_token
+ * @property string      $email
+ * @property string      $auth_key
+ * @property integer     $status
+ * @property string|null $created_at   создано
+ * @property string|null $updated_at   обновлено
+ * @property string      $password     write-only password
  */
 class User extends ActiveRecord implements IdentityInterface {
     const STATUS_DELETED  = 0;
@@ -33,15 +33,6 @@ class User extends ActiveRecord implements IdentityInterface {
      */
     public static function tableName() {
         return '{{%user}}';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function behaviors() {
-        return [
-            TimestampBehavior::className(),
-        ];
     }
 
     /**

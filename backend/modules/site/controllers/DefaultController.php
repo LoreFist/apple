@@ -1,6 +1,6 @@
 <?php
 
-namespace backend\controllers;
+namespace app\modules\site\controllers;
 
 use Yii;
 use yii\web\Controller;
@@ -11,7 +11,7 @@ use common\models\LoginForm;
 /**
  * Site controller
  */
-class SiteController extends Controller {
+class DefaultController extends Controller {
     /**
      * {@inheritdoc}
      */

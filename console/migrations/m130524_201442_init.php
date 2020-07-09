@@ -1,5 +1,6 @@
 <?php
 
+use common\models\User;
 use yii\db\Migration;
 
 class m130524_201442_init extends Migration {
@@ -18,10 +19,18 @@ class m130524_201442_init extends Migration {
             'password_reset_token' => $this->string()->unique(),
             'email'                => $this->string()->notNull()->unique(),
 
-            'status'     => $this->smallInteger()->notNull()->defaultValue(10),
-            'created_at' => $this->integer()->notNull(),
-            'updated_at' => $this->integer()->notNull(),
+            'status'     => $this->smallInteger()->notNull()->defaultValue(User::STATUS_ACTIVE),
+            'created_at' => $this->timestamp()->null()->defaultExpression('CURRENT_TIMESTAMP')->comment('создано'),
+            'updated_at' => $this->timestamp()->defaultValue(null)->append('ON UPDATE CURRENT_TIMESTAMP')->comment('обновлено'),
         ], $tableOptions);
+
+        $modelUser           = new User();
+        $modelUser->username = 'admin';
+        $modelUser->setPassword('admin');
+        $modelUser->generateAuthKey();
+        $modelUser->email  = 'admin@admin.lcl';
+        $modelUser->status = User::STATUS_ACTIVE;
+        $modelUser->save();
     }
 
     public function down() {
