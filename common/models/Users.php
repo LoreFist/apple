@@ -4,14 +4,13 @@ namespace common\models;
 
 use Yii;
 use yii\base\NotSupportedException;
-use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 
 /**
  * User model
  *
- * @property integer     $id
+ * @property integer     $user_id
  * @property string      $username
  * @property string      $password_hash
  * @property string      $password_reset_token
@@ -22,8 +21,10 @@ use yii\web\IdentityInterface;
  * @property string|null $created_at   создано
  * @property string|null $updated_at   обновлено
  * @property string      $password     write-only password
+ *
+ * @property Apples      $applesRelation
  */
-class User extends ActiveRecord implements IdentityInterface {
+class Users extends ActiveRecord implements IdentityInterface {
     const STATUS_DELETED  = 0;
     const STATUS_INACTIVE = 9;
     const STATUS_ACTIVE   = 10;
@@ -32,7 +33,7 @@ class User extends ActiveRecord implements IdentityInterface {
      * {@inheritdoc}
      */
     public static function tableName() {
-        return '{{%user}}';
+        return '{{%users}}';
     }
 
     /**
@@ -49,7 +50,7 @@ class User extends ActiveRecord implements IdentityInterface {
      * {@inheritdoc}
      */
     public static function findIdentity($id) {
-        return static::findOne(['id' => $id, 'status' => self::STATUS_ACTIVE]);
+        return static::findOne(['user_id' => $id, 'status' => self::STATUS_ACTIVE]);
     }
 
     /**
@@ -186,5 +187,14 @@ class User extends ActiveRecord implements IdentityInterface {
      */
     public function removePasswordResetToken() {
         $this->password_reset_token = null;
+    }
+
+    /**
+     * Gets query for [[Apples]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUserRelation() {
+        return $this->hasMany(Apples::className(), ['user_id' => 'user_id']);
     }
 }

@@ -15,7 +15,8 @@ class Module extends \yii\base\Module implements BootstrapInterface {
      */
     public function bootstrap($app) {
         $app->getUrlManager()->addRules([
-            '/' => 'apple/default/index',
+            '/'      => 'apple/default/index',
+            'create' => 'apple/default/create',
         ], false);
     }
 }

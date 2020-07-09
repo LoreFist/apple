@@ -34,7 +34,7 @@ return [
             'csrfParam' => '_csrf-backend',
         ],
         'user'         => [
-            'identityClass'   => 'common\models\User',
+            'identityClass'   => 'common\models\Users',
             'enableAutoLogin' => true,
             'identityCookie'  => ['name' => '_identity-backend', 'httpOnly' => true],
             'loginUrl'        => '/login',
@@ -53,7 +53,7 @@ return [
             ],
         ],
         'errorHandler' => [
-            'errorAction' => '/error',
+            'errorAction' => 'site/default/error',
         ],
         'urlManager'   => [
             'enablePrettyUrl' => true,

@@ -2,6 +2,7 @@
 
 namespace app\modules\apple\controllers;
 
+use common\services\ApplesService;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 
@@ -18,7 +19,7 @@ class DefaultController extends Controller {
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index'],
+                        'actions' => ['index', 'create'],
                         'allow'   => true,
                         'roles'   => ['@'],
                     ],
@@ -27,12 +28,13 @@ class DefaultController extends Controller {
         ];
     }
 
-    /**
-     * Displays homepage.
-     *
-     * @return string
-     */
     public function actionIndex() {
         return $this->render('index');
+    }
+
+    public function actionCreate($count = 1) {
+        for ($i = 0; $i < $count; $i++) {
+            ApplesService::create();
+        }
     }
 }
