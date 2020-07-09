@@ -2,7 +2,9 @@
 
 namespace app\modules\apple\controllers;
 
+use common\models\Apples;
 use common\services\ApplesService;
+use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 
@@ -29,7 +31,13 @@ class DefaultController extends Controller {
     }
 
     public function actionIndex() {
-        return $this->render('index');
+        $dataProvider = new ActiveDataProvider([
+            'query' => Apples::find(),
+        ]);
+
+        return $this->render('index', [
+            'dataProvider' => $dataProvider,
+        ]);
     }
 
     public function actionCreate($count = 1) {

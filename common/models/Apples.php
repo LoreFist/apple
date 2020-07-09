@@ -2,8 +2,6 @@
 
 namespace common\models;
 
-use common\models\Users;
-
 /**
  * This is the model class for table "apples".
  *
@@ -19,6 +17,16 @@ use common\models\Users;
  * @property Users       $userRelation
  */
 class Apples extends \yii\db\ActiveRecord {
+    const STATUS_IN_TREE   = 0;
+    const STATUS_DROP_TREE = 1;
+    const STATUS_ROTTEN    = 2;
+
+    public static $STATUS = [
+        self::STATUS_IN_TREE   => 'На дереве',
+        self::STATUS_DROP_TREE => 'Лежит на земле',
+        self::STATUS_ROTTEN    => 'Гнилое',
+    ];
+
     /**
      * {@inheritdoc}
      */

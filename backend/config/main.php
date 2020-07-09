@@ -68,6 +68,11 @@ return [
                     '@app/views' => '@app/themes/main/views',
                 ],
             ]
+        ],
+        'assetManager' => [
+            'class'           => 'yii\web\AssetManager',
+            'appendTimestamp' => true,
+            'linkAssets'      => true,
         ]
     ],
     'params'              => $params,

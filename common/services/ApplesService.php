@@ -22,10 +22,11 @@ class ApplesService extends Apples {
      * @return Apples
      */
     public static function create() {
-        $model          = new Apples();
-        $model->user_id = Yii::$app->user->id;
-        $model->color   = self::randomColor();
-        $model->status  = 0;
+        $model             = new Apples();
+        $model->user_id    = Yii::$app->user->id;
+        $model->color      = self::randomColor();
+        $model->status     = Apples::STATUS_IN_TREE;
+        $model->created_at = date('Y-m-d H:i:s', rand(10000, strtotime('now')));
         $model->save();
         return $model;
     }
