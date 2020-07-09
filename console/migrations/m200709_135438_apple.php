@@ -15,7 +15,7 @@ class m200709_135438_apple extends Migration {
             'user_id'    => $this->integer()->unsigned()->comment('пользователь владелец'),
             'color'      => $this->string()->notNull()->comment('цвет'),
             'status'     => $this->smallInteger()->notNull()->defaultValue(0)->comment('статус'),
-            'integrity'  => $this->smallInteger()->defaultValue(0)->comment('сколько съели'),
+            'size'       => $this->smallInteger()->defaultValue(0)->comment('сколько съели'),
             'drop_at'    => $this->timestamp()->comment('дата падения'),
             'created_at' => $this->timestamp()->null()->defaultExpression('CURRENT_TIMESTAMP')->comment('создано'),
             'updated_at' => $this->timestamp()->defaultValue(null)->append('ON UPDATE CURRENT_TIMESTAMP')->comment('обновлено'),

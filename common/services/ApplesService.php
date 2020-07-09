@@ -3,17 +3,48 @@
 namespace common\services;
 
 use common\models\Apples;
+use ImagickPixel;
 use Yii;
+use yii\base\Exception;
 
 class ApplesService extends Apples {
+
+    private $nameColor = null;
+
+    /**
+     * new ApplesService('color')
+     *
+     * ApplesService constructor.
+     *
+     * @param null  $nameColor
+     * @param array $config
+     */
+    public function __construct($nameColor = null, $config = []) {
+        parent::__construct($config);
+        $this->nameColor = $nameColor;
+        $this->create();
+    }
 
     /**
      * Генерация случайного цвета в HEX
      *
      * @return string
      */
-    public static function randomColor() {
+    private static function randomColor() {
         return '#' . str_pad(dechex(mt_rand(0, 0xFFFFFF)), 6, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * конвертер имени цвета в HEX
+     *
+     * @param $nm
+     *
+     * @return string
+     */
+    private static function color2hex($nm) {
+        preg_match_all("/\d{1,3}/", (new ImagickPixel ($nm))->getColorAsString(), $matches);
+        [$r, $g, $b] = $matches[0];
+        return sprintf("#%06X", $r * 65536 + $g * 256 + $b);
     }
 
     /**
@@ -21,13 +52,88 @@ class ApplesService extends Apples {
      *
      * @return Apples
      */
-    public static function create() {
-        $model             = new Apples();
-        $model->user_id    = Yii::$app->user->id;
-        $model->color      = self::randomColor();
-        $model->status     = Apples::STATUS_IN_TREE;
-        $model->created_at = date('Y-m-d H:i:s', rand(10000, strtotime('now')));
-        $model->save();
-        return $model;
+    public function create() {
+        $this->user_id    = Yii::$app->user->id;
+        $this->color      = $this->nameColor == null ? self::randomColor() : self::color2hex($this->nameColor);
+        $this->status     = Apples::STATUS_IN_TREE;
+        $this->created_at = date('Y-m-d H:i:s', rand(10000, strtotime('now')));
+        $this->save();
+        return $this;
     }
+
+    /**
+     * Положить яблоко на землю
+     *
+     * @throws Exception
+     */
+    public function fallToGround() {
+        if ($this->status == Apples::STATUS_IN_TREE) {
+            $this->status  = Apples::STATUS_DROP_TREE;
+            $this->drop_at = date('Y-m-d H:i:s', strtotime('now'));
+        }
+        else
+            throw new Exception('Уронить яблоко можно только когда оно весит');
+    }
+
+    /**
+     * откусить часть яблока
+     *
+     * @param $percent
+     *
+     * @throws Exception
+     */
+    public function eat($percent) {
+        if ($this->status == Apples::STATUS_DROP_TREE) $this->size = $percent;
+        else throw new Exception('Откучить яблоко можно когда оно лежит');
+    }
+
+    /**
+     * Удалить яблоко
+     *
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
+    public function deleteA() {
+        if ($this->size >= Apples::SIZE_FULL) return $this->delete();
+        else throw new Exception('Яблоко нельзя удалить т.к. оно еще не до конца съеденно. Осталь ' . (Apples::SIZE_FULL - $this->size) . '%');
+    }
+
+    /**
+     * @param $id
+     *
+     * @return array
+     * @throws Exception
+     */
+    public static function setFallToGround($id) {
+        $model = self::findOne(['apple_id' => $id]);
+        $model->fallToGround();
+        return ['status' => $model->save(), 'model' => $model];
+    }
+
+    /**
+     * @param $id
+     * @param $percent
+     *
+     * @return array
+     * @throws Exception
+     */
+    public static function setEat($id, $percent) {
+        $model = self::findOne(['apple_id' => $id]);
+        $model->eat($percent);
+        return ['status' => $model->save(), 'model' => $model];
+    }
+
+    /**
+     * @param $id
+     *
+     * @return array
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
+    public static function setDelete($id) {
+        $model  = self::findOne(['apple_id' => $id]);
+        $status = $model->deleteA();
+        return ['status' => $status, 'model' => $model];
+    }
+
 }

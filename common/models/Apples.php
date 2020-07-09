@@ -9,7 +9,7 @@ namespace common\models;
  * @property int|null    $user_id    пользователь владелец
  * @property string      $color      цвет
  * @property int         $status     статус
- * @property int|null    $integrity  сколько съели
+ * @property int|null    $size       сколько съели
  * @property string|null $drop_at    дата падения
  * @property string|null $created_at создано
  * @property string|null $updated_at обновлено
@@ -20,6 +20,8 @@ class Apples extends \yii\db\ActiveRecord {
     const STATUS_IN_TREE   = 0;
     const STATUS_DROP_TREE = 1;
     const STATUS_ROTTEN    = 2;
+
+    const SIZE_FULL = 100; //размер съеденного яблока
 
     public static $STATUS = [
         self::STATUS_IN_TREE   => 'На дереве',
@@ -39,7 +41,7 @@ class Apples extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['user_id', 'status', 'integrity'], 'integer'],
+            [['user_id', 'status', 'size'], 'integer'],
             [['color'], 'required'],
             [['drop_at', 'created_at', 'updated_at'], 'safe'],
             [['color'], 'string', 'max' => 255],
@@ -56,7 +58,7 @@ class Apples extends \yii\db\ActiveRecord {
             'user_id'    => 'User ID',
             'color'      => 'Color',
             'status'     => 'Status',
-            'integrity'  => 'Integrity',
+            'size'       => 'Size',
             'drop_at'    => 'Drop At',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',

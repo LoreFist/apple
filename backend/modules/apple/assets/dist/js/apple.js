@@ -24,3 +24,40 @@ $('#apples_create').on('click', function (event) {
         $.pjax.reload({container: '#apple_grid', timeout: false, async: false});
     })
 });
+
+$('#btn_drop').on('click', function (event) {
+    let _self = $(this);
+    event.preventDefault();
+    loadShow(_self);
+    $.get('/drop', {
+        id: _self.data('id')
+    }, function (response) {
+        loadHide(_self);
+        $.pjax.reload({container: '#apple_grid', timeout: false, async: false});
+    })
+});
+
+$('#btn_eat').on('click', function (event) {
+    let _self = $(this);
+    event.preventDefault();
+    loadShow(_self);
+    $.get('/eat', {
+        id     : _self.data('id'),
+        percent: getRandomInt(1, 50)
+    }, function (response) {
+        loadHide(_self);
+        $.pjax.reload({container: '#apple_grid', timeout: false, async: false});
+    })
+});
+
+$('#btn_delete').on('click', function (event) {
+    let _self = $(this);
+    event.preventDefault();
+    loadShow(_self);
+    $.get('/delete', {
+        id: _self.data('id'),
+    }, function (response) {
+        loadHide(_self);
+        $.pjax.reload({container: '#apple_grid', timeout: false, async: false});
+    })
+});
