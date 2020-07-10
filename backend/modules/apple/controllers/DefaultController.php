@@ -43,34 +43,79 @@ class DefaultController extends Controller {
 
     public function actionCreate($count = 1) {
         if (Yii::$app->request->isAjax) {
-            for ($i = 0; $i < $count; $i++) {
-                $apple = new ApplesService();
-                Yii::$app->session->setFlash('info', "Создали яблоко с цветов $apple->color");
+            try {
+                $message = '';
+                for ($i = 0; $i < $count; $i++) {
+                    $apple   = new ApplesService();
+                    $message .= "Создали яблоко с цветом $apple->color \r\n";
+                }
+                return $this->asJson([
+                    'status'  => true,
+                    'message' => $message
+                ]);
+            } catch (\Exception $e) {
+                return $this->asJson([
+                    'status'  => false,
+                    'message' => $e->getMessage()
+                ]);
             }
         }
     }
 
     public function actionDrop($id) {
         if (Yii::$app->request->isAjax) {
-            $result = ApplesService::setFallToGround($id);
-            if ($result['status']) Yii::$app->session->setFlash('success', "Яблоко успешно упало на землю");
-            else Yii::$app->session->setFlash('success', "Яблоко не упало на землю");
+            try {
+                $result = ApplesService::setFallToGround($id);
+                if ($result['status']) $message = "Яблоко успешно упало на землю";
+                else $message = "Яблоко не упало на землю";
+                return $this->asJson([
+                    'status'  => true,
+                    'message' => $message
+                ]);
+            } catch (\Exception $e) {
+                return $this->asJson([
+                    'status'  => false,
+                    'message' => $e->getMessage()
+                ]);
+            }
         }
     }
 
     public function actionEat($id, $percent = 10) {
         if (Yii::$app->request->isAjax) {
-            $result = ApplesService::setEat($id, $percent);
-            if ($result['status']) $message = "От яблока откусили " . $result['model']->size . " %";
-            else $message = "Не удалось откусить яблоко";
+            try {
+                $result = ApplesService::setEat($id, (int)$percent);
+                if ($result['status']) $message = "От яблока откусили " . $result['percent'] . " %";
+                else $message = "Не удалось откусить яблоко";
+                return $this->asJson([
+                    'status'  => true,
+                    'message' => $message
+                ]);
+            } catch (\Exception $e) {
+                return $this->asJson([
+                    'status'  => false,
+                    'message' => $e->getMessage()
+                ]);
+            }
         }
     }
 
     public function actionDelete($id) {
         if (Yii::$app->request->isAjax) {
-            $result = ApplesService::setDelete($id);
-            if ($result['status']) $message = "От яблока откусили " . $result['model']->size . " %";
-            else $message = "Не удалось откусить яблоко";
+            try {
+                $result = ApplesService::setDelete($id);
+                if ($result['status']) $message = "Яблоко уничтожили";
+                else $message = "Не удалось уничтожить яблоко";
+                return $this->asJson([
+                    'status'  => true,
+                    'message' => $message
+                ]);
+            } catch (\Exception $e) {
+                return $this->asJson([
+                    'status'  => false,
+                    'message' => $e->getMessage()
+                ]);
+            }
         }
     }
 }

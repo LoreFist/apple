@@ -2,6 +2,8 @@
 
 namespace common\models;
 
+use yii\base\Exception;
+
 /**
  * This is the model class for table "apples".
  *
@@ -72,5 +74,11 @@ class Apples extends \yii\db\ActiveRecord {
      */
     public function getUserRelation() {
         return $this->hasOne(Users::className(), ['user_id' => 'user_id']);
+    }
+
+    public function beforeSave($insert) {
+        if ($this->getOldAttribute('status') == Apples::STATUS_IN_TREE AND $this->status == Apples::STATUS_ROTTEN)
+            throw new Exception('Яблоко не может испортится пока весит на дереве');
+        return parent::beforeSave($insert);
     }
 }

@@ -26,6 +26,19 @@ class ApplesService extends Apples {
     }
 
     /**
+     * ищет яблоки попадающие под условие испорченного и сохраняет его таковым
+     */
+    private static function checkRotten() {
+        $time         = date('Y-m-d H:i:s', strtotime('-5 hours'));
+        $applesRotten = Apples::find()->where(['status' => Apples::STATUS_DROP_TREE])->andWhere(['<=', 'drop_at', $time])->all();
+        foreach ($applesRotten as $apple) {
+            $apple->status = Apples::STATUS_ROTTEN;
+            $apple->validate();
+            $apple->save(false);
+        }
+    }
+
+    /**
      * Генерация случайного цвета в HEX
      *
      * @return string
@@ -83,8 +96,11 @@ class ApplesService extends Apples {
      * @throws Exception
      */
     public function eat($percent) {
-        if ($this->status == Apples::STATUS_DROP_TREE) $this->size = $percent;
-        else throw new Exception('Откучить яблоко можно когда оно лежит');
+        if ($this->size <= 0) throw new Exception('Съесть нельзя, яблоко уже съеденно');
+        elseif ($this->status == Apples::STATUS_DROP_TREE) $this->size = $this->size - $percent;
+        elseif ($this->status == Apples::STATUS_ROTTEN) throw new Exception('Съесть нельзя, яблоко испорченно');
+        else throw new Exception('Съесть нельзя, яблоко на дереве');
+        if ($this->size <= 0) $this->size = 0;
     }
 
     /**
@@ -118,9 +134,15 @@ class ApplesService extends Apples {
      * @throws Exception
      */
     public static function setEat($id, $percent) {
-        $model = self::findOne(['apple_id' => $id]);
+        self::checkRotten();
+        $model   = self::findOne(['apple_id' => $id]);
+        $oldSize = $model->size;
         $model->eat($percent);
-        return ['status' => $model->save(), 'model' => $model];
+
+        $eatPercent = $percent;
+        if ($percent > $oldSize) $eatPercent = $oldSize;
+
+        return ['status' => $model->save(), 'model' => $model, 'percent' => $eatPercent];
     }
 
     /**

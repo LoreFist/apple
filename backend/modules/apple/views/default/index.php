@@ -25,8 +25,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php Pjax::begin(['id' => 'apple_grid']); ?>
 
-    <div id="info"></div>
-
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'columns'      => [
@@ -42,10 +40,16 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'size',
                 'value'     => function (Apples $model) {
-                    return Apples::SIZE_FULL - $model->size . ' %';
+                    return $model->size . ' %';
                 }
             ],
-            'drop_at',
+            [
+                'attribute' => 'drop_at',
+                'value'     => function (Apples $model) {
+                    return Yii::$app->formatter->asRelativeTime($model->drop_at);
+                },
+                'format'    => 'html'
+            ],
             [
                 'attribute' => 'created_at',
                 'value'     => function (Apples $model) {
@@ -61,24 +65,21 @@ $this->params['breadcrumbs'][] = $this->title;
                     'drop'   => function ($url, $model, $key) {
                         return Html::a('Уронить', $url, [
                             'title'   => 'Уронить яблоко с дерева',
-                            'class'   => 'btn btn-secondary btn-sm',
-                            'id'      => 'btn_drop',
+                            'class'   => 'btn btn-secondary btn-sm btn_drop',
                             'data-id' => $model->apple_id
                         ]);
                     },
                     'eat'    => function ($url, $model, $key) {
                         return Html::a('Съесть', $url, [
                             'title'   => 'Откусить часть яблока',
-                            'class'   => 'btn btn-primary btn-sm',
-                            'id'      => 'btn_eat',
+                            'class'   => 'btn btn-primary btn-sm btn_eat',
                             'data-id' => $model->apple_id
                         ]);
                     },
                     'delete' => function ($url, $model, $key) {
                         return Html::a('Удалить', $url, [
                             'title'   => 'Удалить',
-                            'class'   => 'btn btn-danger btn-sm',
-                            'id'      => 'btn_delete',
+                            'class'   => 'btn btn-danger btn-sm btn_delete',
                             'data-id' => $model->apple_id
                         ]);
                     },
